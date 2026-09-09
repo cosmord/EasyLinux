@@ -8,6 +8,8 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 
 - Añadido un empaquetador autoextraíble que distribuye EasyLinux como un único archivo ejecutable.
 - Añadido GitHub Actions para validar la sintaxis Bash, ejecutar ShellCheck, construir el artefacto y publicar releases al crear etiquetas `v*`.
+- Añadido el perfil `full-open-source` con catálogos ampliados de escritorio, lenguajes, editores y herramientas.
+- Añadidos descriptores declarativos `apt|identificador|nombre` y `flatpak|identificador|nombre`, mostrando la fuente durante la instalación.
 
 ## [2.0] - 2026-03-09
 

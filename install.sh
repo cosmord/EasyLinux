@@ -51,6 +51,7 @@ Options:
   --minimal         Minimal profile
   --vm              VM profile
   --redteam         Red team profile
+  --open-source     Full open-source desktop and development profile
   --yes             Non-interactive confirmation mode
   --no-update       Skip initial system update
   -h, --help        Show this help
@@ -86,6 +87,9 @@ parse_args() {
       --redteam)
         PROFILE="redteam"
         ;;
+      --open-source)
+        PROFILE="full-open-source"
+        ;;
       --yes)
         AUTO_YES=1
         ;;
@@ -108,10 +112,10 @@ parse_args() {
 
 menu_browsers() {
   print_header "$CYAN" "BROWSERS"
-  echo "  1) Brave Browser"
-  echo "  2) LibreWolf"
-  echo "  3) Floorp"
-  echo "  4) Supremium/Chromium"
+  echo "  1) Brave Browser [APT: external repo]"
+  echo "  2) LibreWolf [APT: external repo]"
+  echo "  3) Floorp [Flatpak]"
+  echo "  4) Supremium/Chromium [APT]"
   echo "  5) All"
   echo "  0) Skip"
   read -r -p "Option [0-5]: " browser_choice
@@ -129,11 +133,11 @@ menu_browsers() {
 
 menu_applications() {
   print_header "$GREEN" "APPLICATIONS"
-  echo "  1) Discord"
-  echo "  2) Thunderbird"
-  echo "  3) Session"
-  echo "  4) LibreOffice"
-  echo "  5) VLC"
+  echo "  1) Discord [Flatpak]"
+  echo "  2) Thunderbird [APT]"
+  echo "  3) Session [Direct DEB]"
+  echo "  4) LibreOffice [APT]"
+  echo "  5) VLC [APT]"
   echo "  6) All"
   echo "  0) Skip"
   read -r -p "Option [0-6]: " app_choice
@@ -152,15 +156,15 @@ menu_applications() {
 
 menu_development() {
   print_header "$PURPLE" "DEVELOPMENT"
-  echo "  1) VS Code"
-  echo "  2) Python"
-  echo "  3) C++"
-  echo "  4) Java"
-  echo "  5) Node.js"
-  echo "  6) Go"
-  echo "  7) Rust"
-  echo "  8) Ruby"
-  echo "  9) Dart"
+  echo "  1) VS Code [APT: external repo]"
+  echo "  2) Python [APT]"
+  echo "  3) C++ [APT]"
+  echo "  4) Java [APT]"
+  echo "  5) Node.js [APT: external repo]"
+  echo "  6) Go [APT]"
+  echo "  7) Rust [rustup]"
+  echo "  8) Ruby [APT]"
+  echo "  9) Dart [APT: external repo]"
   echo "  10) Full development stack"
   echo "  0) Skip"
   read -r -p "Option [0-10]: " dev_choice
@@ -183,9 +187,9 @@ menu_development() {
 
 menu_tools() {
   print_header "$YELLOW" "ADDITIONAL TOOLS"
-  echo "  1) Git"
-  echo "  2) Docker"
-  echo "  3) Terminal tools"
+  echo "  1) Git [APT]"
+  echo "  2) Docker [APT: external repo]"
+  echo "  3) Terminal tools [APT]"
   echo "  4) All"
   echo "  0) Skip"
   read -r -p "Option [0-4]: " tools_choice
@@ -235,6 +239,7 @@ run_profile() {
   local profile_step
   local profile_pkg
   local profile_flatpak
+  local profile_app
   local profile_extension
 
   if [[ ! -f "$profile_file" ]]; then
@@ -248,12 +253,13 @@ run_profile() {
   PROFILE_STEPS=()
   PROFILE_APT_PACKAGES=()
   PROFILE_FLATPAK_APPS=()
+  PROFILE_APPS=()
   PROFILE_VSCODE_EXTENSIONS=()
 
   # shellcheck disable=SC1090
   source "$profile_file"
 
-  if [[ "${#PROFILE_CATALOGS[@]}" -eq 0 && "${#PROFILE_STEPS[@]}" -eq 0 && "${#PROFILE_APT_PACKAGES[@]}" -eq 0 && "${#PROFILE_FLATPAK_APPS[@]}" -eq 0 && "${#PROFILE_VSCODE_EXTENSIONS[@]}" -eq 0 ]]; then
+  if [[ "${#PROFILE_CATALOGS[@]}" -eq 0 && "${#PROFILE_STEPS[@]}" -eq 0 && "${#PROFILE_APT_PACKAGES[@]}" -eq 0 && "${#PROFILE_FLATPAK_APPS[@]}" -eq 0 && "${#PROFILE_APPS[@]}" -eq 0 && "${#PROFILE_VSCODE_EXTENSIONS[@]}" -eq 0 ]]; then
     print_error "Profile $PROFILE does not define executable content"
     return 1
   fi
@@ -267,6 +273,7 @@ run_profile() {
     CATALOG_STEPS=()
     CATALOG_APT_PACKAGES=()
     CATALOG_FLATPAK_APPS=()
+    CATALOG_APPS=()
     CATALOG_VSCODE_EXTENSIONS=()
 
     catalog_file="$catalogs_dir/${catalog_name}.conf"
@@ -302,6 +309,10 @@ run_profile() {
       install_flatpak_from_descriptor "$profile_flatpak"
     done
 
+    for profile_app in "${CATALOG_APPS[@]}"; do
+      install_app_descriptor "$profile_app" || true
+    done
+
     for profile_extension in "${CATALOG_VSCODE_EXTENSIONS[@]}"; do
       install_vscode_extension "$profile_extension"
     done
@@ -325,6 +336,10 @@ run_profile() {
     install_flatpak_from_descriptor "$profile_flatpak"
   done
 
+  for profile_app in "${PROFILE_APPS[@]}"; do
+    install_app_descriptor "$profile_app" || true
+  done
+
   for profile_extension in "${PROFILE_VSCODE_EXTENSIONS[@]}"; do
     install_vscode_extension "$profile_extension"
   done
@@ -339,8 +354,9 @@ interactive_menu() {
     echo "  4) Additional tools"
     echo "  5) Windows compatibility"
     echo "  6) Install EVERYTHING (without Wine)"
+    echo "  7) Full open-source suite [APT + Flatpak]"
     echo "  0) Exit"
-    read -r -p "Option [0-6]: " main_choice
+    read -r -p "Option [0-7]: " main_choice
 
     case "$main_choice" in
       1) menu_browsers ;;
@@ -350,6 +366,11 @@ interactive_menu() {
       5) menu_wine ;;
       6)
         install_all
+        break
+        ;;
+      7)
+        PROFILE="full-open-source"
+        run_profile
         break
         ;;
       0)

@@ -22,6 +22,24 @@ jobs:
       - name: Check Bash syntax
         run: find . -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
 
+      - name: Validate catalog application sources
+        run: |
+          set -Eeuo pipefail
+          for catalog_file in config/catalogs/*.conf; do
+            CATALOG_APPS=()
+            # shellcheck disable=SC1090
+            source "$catalog_file"
+            for descriptor in "${CATALOG_APPS[@]}"; do
+              case "$descriptor" in
+                apt\|*\|*|flatpak\|*\|*) ;;
+                *)
+                  echo "Invalid application descriptor in $catalog_file: $descriptor" >&2
+                  exit 1
+                  ;;
+              esac
+            done
+          done
+
       - name: Run ShellCheck
         run: shellcheck --severity=error install.sh functions/*.sh modules/*.sh tools/*.sh
 

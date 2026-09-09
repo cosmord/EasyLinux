@@ -101,6 +101,9 @@ chmod +x install.sh
 
 # Skip initial apt update
 ./install.sh --no-update
+
+# Broad open-source suite (APT + Flatpak)
+./install.sh --open-source --yes
 ```
 
 > Note: the old "one-liner" direct download method is no longer recommended because the installer now uses multiple modules and configuration files.
@@ -175,6 +178,19 @@ and run it with:
 ./install.sh --profile custom
 ```
 
+The `full-open-source` profile combines desktop, development, and tools catalogs. It includes browsers, LibreOffice, editors, multimedia, graphics, privacy tools, programming languages, and terminal utilities. Graphical applications show `[Flatpak]` and system packages show `[APT]`.
+
+The catalogs are located in `config/catalogs/open-source-*.conf`.
+
+To add an application with an explicit source:
+
+```bash
+CATALOG_APPS=(
+   "flatpak|org.kde.kate|Kate"
+   "apt|neovim|Neovim"
+)
+```
+
 ---
 
 # Supported Profile Keys
@@ -185,6 +201,7 @@ and run it with:
 | `PROFILE_STEPS`             | Existing installer functions (example: `install_all_development`) |                |
 | `PROFILE_APT_PACKAGES`      | APT package names                                                 |                |
 | `PROFILE_FLATPAK_APPS`      | List of `"appId                                                   | Display Name"` |
+| `PROFILE_APPS`              | List of `"source|identifier|Display Name"` using `apt` or `flatpak` |
 | `PROFILE_VSCODE_EXTENSIONS` | List of `"extensionId                                             | Display Name"` |
 
 ---

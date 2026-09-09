@@ -117,6 +117,33 @@ install_flatpak_from_descriptor() {
   install_flatpak "$app_id" "$friendly_name"
 }
 
+install_app_descriptor() {
+  local descriptor="$1"
+  local app_source
+  local package_id
+  local friendly_name
+
+  if [[ "$descriptor" == apt\|* || "$descriptor" == flatpak\|* ]]; then
+    IFS='|' read -r app_source package_id friendly_name <<< "$descriptor"
+  else
+    app_source="flatpak"
+    parse_descriptor "$descriptor" "$descriptor" package_id friendly_name
+  fi
+
+  case "$app_source" in
+    apt)
+      install_apt "$package_id" "$friendly_name [APT]"
+      ;;
+    flatpak)
+      install_flatpak "$package_id" "$friendly_name [Flatpak]"
+      ;;
+    *)
+      print_warning "Unknown application source '$app_source' for $friendly_name"
+      return 1
+      ;;
+  esac
+}
+
 install_vscode_extension() {
   local descriptor="$1"
   local extension_id

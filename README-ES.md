@@ -83,6 +83,9 @@ chmod +x install.sh
 
 # Omitir update inicial
 ./install.sh --no-update
+
+# Suite amplia de software libre (APT + Flatpak)
+./install.sh --open-source --yes
 ```
 
 > Nota: ya no se recomienda el modo "one-liner" de descarga directa porque el instalador usa multiples modulos y archivos de configuracion.
@@ -138,12 +141,26 @@ Puedes crear tu propio perfil, por ejemplo `config/profiles/custom.conf`, y ejec
 ./install.sh --profile custom
 ```
 
+El perfil `full-open-source` combina catálogos de escritorio, desarrollo y herramientas. Incluye navegadores, LibreOffice, editores, multimedia, gráficos, privacidad, lenguajes y utilidades de terminal. Las aplicaciones gráficas muestran `[Flatpak]` y los paquetes del sistema muestran `[APT]`.
+
+Los catálogos están en `config/catalogs/open-source-*.conf`.
+
+Para añadir una aplicación con fuente explícita:
+
+```bash
+CATALOG_APPS=(
+   "flatpak|org.kde.kate|Kate"
+   "apt|neovim|Neovim"
+)
+```
+
 Claves soportadas en perfil:
 
 - PROFILE_CATALOGS: catálogos reutilizables definidos en `config/catalogs/*.conf`
 - PROFILE_STEPS: funciones existentes del instalador (ejemplo: install_all_development)
 - PROFILE_APT_PACKAGES: paquetes apt por nombre
 - PROFILE_FLATPAK_APPS: lista de "appId|Nombre visible" (el nombre es opcional)
+- PROFILE_APPS: lista de "fuente|identificador|Nombre visible", con fuente `apt` o `flatpak`
 - PROFILE_VSCODE_EXTENSIONS: lista de "extensionId|Nombre visible" (el nombre es opcional)
 
 Ejemplo de catálogo (`config/catalogs/development-base.conf`):
