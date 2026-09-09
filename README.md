@@ -2,8 +2,8 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Consolas&size=18&duration=500&pause=500&color=04B305&background=00000049&multiline=true&repeat=false&width=500&height=250&lines=%24+.%2Finstall.sh+--developer;%5BINFO%5D+Loading+profile%3A+developer;%5BINFO%5D+Installing+development+toolchain...;%5BINFO%5D+Making+a+productive+system...;%5BLOAD%5D+Finishing+details+...;%5BSUCCESS%5D+Environment+bootstrap+completed)](https://git.io/typing-svg)
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/your-user/EasyLinux)
-[![Version](https://img.shields.io/badge/version-2.0-blue.svg)](https://github.com/your-user/EasyLinux)
+[![Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/cosmord/EasyLinux)
+[![Version](https://img.shields.io/badge/version-2.0-blue.svg)](https://github.com/cosmord/EasyLinux)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 Automatic setup project for Debian-based Linux distributions. Perfect for quickly configuring a fresh system with applications and development tools, now with a modular architecture for easier maintenance and scalability.
@@ -104,6 +104,24 @@ chmod +x install.sh
 ```
 
 > Note: the old "one-liner" direct download method is no longer recommended because the installer now uses multiple modules and configuration files.
+
+### Method 2: Downloadable single file
+
+Every CI run creates an artifact named `easylinux-single-file`. Releases created from a `v*` tag also include an `EasyLinux` file that can be downloaded from GitHub Releases.
+
+```bash
+chmod +x EasyLinux
+./EasyLinux --developer --yes
+```
+
+The file is a self-extracting launcher containing the installer, modules, and profiles. It extracts them into a temporary directory and runs the same `install.sh`. It requires Bash, `tar`, `base64`, an internet connection, and sudo on a Debian-based distribution.
+
+To build it locally:
+
+```bash
+bash tools/build-single-file.sh
+./dist/EasyLinux --help
+```
 
 ---
 

@@ -2,7 +2,14 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
-## [2.0] - 2026-03-09  
+## [Unreleased]
+
+### 🔧 Mejoras técnicas
+
+- Añadido un empaquetador autoextraíble que distribuye EasyLinux como un único archivo ejecutable.
+- Añadido GitHub Actions para validar la sintaxis Bash, ejecutar ShellCheck, construir el artefacto y publicar releases al crear etiquetas `v*`.
+
+## [2.0] - 2026-03-09
 
 ### ✨ Nuevas Funcionalidades
 

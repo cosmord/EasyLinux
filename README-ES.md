@@ -1,7 +1,7 @@
 # 🐧 EasyLinux - Instalador Automático
 
 [![Estado](https://img.shields.io/badge/estado-activo-success.svg)](https://github.com/tu-usuario/EasyLinux)
-[![Versión](https://img.shields.io/badge/versión-2.0-blue.svg)](https://github.com/tu-usuario/EasyLinux)
+[![Versión](https://img.shields.io/badge/versión-2.0-blue.svg)](https://github.com/cosmord/EasyLinux)
 [![Licencia](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE)
 
 Proyecto de configuración automática para distribuciones Linux basadas en Debian(pensada para Parrot OS). Perfecto para configurar rápidamente un sistema nuevo con aplicaciones y herramientas de desarrollo, ahora con arquitectura modular para facilitar mantenimiento y escalado.
@@ -30,12 +30,12 @@ Proyecto de configuración automática para distribuciones Linux basadas en Debi
 
 ## 🔧 Requisitos
 
-- **Sistema Operativo**: 
+- **Sistema Operativo**:
   - Parrot OS (recomendado)
   - Debian 11+ / Ubuntu 20.04+
   - Linux Mint 20+
   - Cualquier derivada de Debian
-  
+
 - **Hardware**:
   - Al menos 5GB de espacio libre
   - Conexión a Internet activa
@@ -86,6 +86,24 @@ chmod +x install.sh
 ```
 
 > Nota: ya no se recomienda el modo "one-liner" de descarga directa porque el instalador usa multiples modulos y archivos de configuracion.
+
+### Método 2: Archivo único descargable
+
+Cada ejecución de CI genera un artefacto llamado `easylinux-single-file`. Las versiones publicadas con una etiqueta `v*` también incluyen un archivo `EasyLinux` descargable en GitHub Releases.
+
+```bash
+chmod +x EasyLinux
+./EasyLinux --developer --yes
+```
+
+El archivo es un lanzador autoextraíble: contiene el instalador, sus módulos y sus perfiles, extrae todo en un directorio temporal y ejecuta el mismo `install.sh`. Requiere Bash, `tar`, `base64`, conexión a Internet y sudo en una distribución Debian.
+
+Para crear el archivo localmente:
+
+```bash
+./tools/build-single-file.sh
+./dist/EasyLinux --help
+```
 
 ## Perfiles declarativos
 
@@ -215,7 +233,7 @@ EasyLinux/
 ### ⚠️ Compatibilidad con Windows (NO RECOMENDADO)
 
 > **⚠️ ADVERTENCIA:** Esta opción no es recomendada. Preferible usar aplicaciones nativas de Linux.
-> 
+>
 > 📚 **Documentación adicional:**
 > - [WINE_ALTERNATIVES.md](WINE_ALTERNATIVES.md) - Lista completa de alternativas nativas
 > - [WINE_GUIDE.md](WINE_GUIDE.md) - Guía técnica detallada de Wine
@@ -414,7 +432,7 @@ Para añadir una nueva aplicación al script:
 ```bash
 install_miapp() {
     print_info "Instalando MiApp..."
-    
+
     if sudo apt install -y miapp &>> "$LOG_FILE"; then
         print_success "MiApp instalado correctamente"
         ((INSTALL_COUNT++))
